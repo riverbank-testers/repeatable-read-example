@@ -5,6 +5,7 @@ import com.example.repeatablereadexample.service.TransferService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.retry.support.RetryTemplate;
 
 import javax.annotation.Resource;
 
@@ -26,9 +27,12 @@ class ApplicationTests {
     public void testParallelExecution()
             throws InterruptedException {
 
-        int threadCount = 10;
+        int threadCount = 45;
 
-        assertEquals(10L, accountRepository.getBalance("Alice-123"));
+        accountRepository.setBalance("Alice-123", 100);
+        accountRepository.setBalance("Bob-456", 0);
+
+        assertEquals(100L, accountRepository.getBalance("Alice-123"));
         assertEquals(0L, accountRepository.getBalance("Bob-456"));
 
         CountDownLatch startLatch = new CountDownLatch(1);
